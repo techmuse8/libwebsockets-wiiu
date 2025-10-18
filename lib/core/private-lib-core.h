@@ -124,22 +124,27 @@
   *
   */
 
- #if defined(LWS_PLAT_FREERTOS)
-  #include "private-lib-plat-freertos.h"
+#if defined(LWS_PLAT_FREERTOS)
+ #include "private-lib-plat-freertos.h"
+#else
+ #if defined(WIN32) || defined(_WIN32)
+  #include "private-lib-plat-windows.h"
  #else
-  #if defined(WIN32) || defined(_WIN32)
-   #include "private-lib-plat-windows.h"
+  #if defined(LWS_PLAT_BAREMETAL)
+
   #else
-   #if defined(LWS_PLAT_BAREMETAL)
+   #if defined(LWS_PLAT_OPTEE)
+    #include "private-lib-plat.h"
    #else
-    #if defined(LWS_PLAT_OPTEE)
-     #include "private-lib-plat.h"
+    #if defined(LWS_PLAT_WIIU)
+     #include "private-lib-plat-wiiu.h"
     #else
      #include "private-lib-plat-unix.h"
     #endif
    #endif
   #endif
  #endif
+#endif
 
  /*
   *
