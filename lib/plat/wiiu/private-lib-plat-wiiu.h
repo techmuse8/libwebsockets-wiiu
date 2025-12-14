@@ -29,18 +29,27 @@
 /* Wii U platform stubs for libwebsockets */
 
 #include <wut.h>
+#include <sys/socket.h>
+//#include <netinet/in.h>
 #include <arpa/inet.h>
 #include <errno.h>
-#include <netinet/in.h>
 #include <stdint.h>
 #include <sys/resource.h>
-#include <sys/socket.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <coreinit/thread.h>
 #include <coreinit/mutex.h>
+#include <netinet/tcp.h>
+
+#include <whb/proc.h>
+#include <whb/log.h>
+#include <whb/log_module.h>
+#include <whb/log_cafe.h>
+#include <whb/log_udp.h>
+#include <coreinit/debug.h>
+
 
 /* No rlimit on Wii U afaik */
 struct rlimit {
@@ -76,7 +85,8 @@ typedef OSThread *lws_tid_t;
 #define MSG_NOSIGNAL 0
 #endif
 
-#define compatible_close(fd) close(fd)
+#define compatible_close(x) close(x)
+#define compatible_file_close(fd) close(fd)
 
 /* Wii U has no AF_UNIX / Unix domain sockets */
 #ifndef AF_UNIX
@@ -98,11 +108,9 @@ typedef OSThread *lws_tid_t;
 struct lws;
 struct lws_context;
 
-static inline void delete_from_fd(struct lws_context *ctx, int fd) {
-    (void)ctx;
-    (void)fd;
-}
+void delete_from_fd(const struct lws_context *context, int fd);
 
-// TODO: uninline this
-static inline int lws_plat_socket_offset(void) { return 0; }
+#define lws_plat_socket_offset() (0)
 int insert_wsi(const struct lws_context *context, struct lws *wsi);
+
+#define printf WHBLogPrintf
